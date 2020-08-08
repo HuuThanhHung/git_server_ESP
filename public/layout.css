@@ -1,6 +1,8 @@
 #wrapper{width: 600px ;margin : auto}
 #txtUsername{background-color: transparent; border:solid 1px black}
 
+
+
 #left,  #right{min-height: 30px}
 #left{width:30% ;float:left;background-color: #07f2d3}
 #right{width:70% ;float:right;background-color: #5bd0eb}

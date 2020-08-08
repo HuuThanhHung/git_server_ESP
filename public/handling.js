@@ -4,15 +4,24 @@ var socket = io("http://localhost:1805")
 $(document).ready(function(){
     ////step 2 Server send bradcast to all node
     socket.on("Sever_send_ESP_Json",function(Json_from_Server){
-        alert("pH value: "+Json_from_Server.pH);
-        //alert("hello new day");
+        $("#boxpH").html("");
+        $("#boxEC").html("");
+        $("#boxTemp").html("");
+        $("#boxpumpStatus").html("");
+               
+        $("#boxpH").append("<div class = 'user'>"+ Json_from_Server.pH +"</div>");
+        $("#boxEC").append("<div class = 'user'>"+ Json_from_Server.EC +"</div>");
+        $("#boxTemp").append("<div class = 'user'>"+ Json_from_Server.Temp +"</div>");
+        $("#boxpumpStatus").append("<div class = 'user'>"+ Json_from_Server.PumpStatus +"</div>");
+
+        
     });
 
     
     //alert("hello new day");
-    $("#loginForm").show();
+    $("#loginForm").hide();
     $("#chatForm").hide();
-
+    $("#JsonDisplay").show();
     //step 1: sclient emit request
     $("#btnRegister").click(function(){
         socket.emit("client_send_username", $("#txtUsername").val());
