@@ -1,11 +1,14 @@
 
 var socket = io("http://localhost:1805")
-//4 step for login
-// Step 1: client send user name to server ----- client_send_username
-// Step 2: Server send back when regist failed  ----- server_send_failed
-// Step 3: Server send back when regist success  ----- server_send_success
-// Step 4: Server send list user updated with new client to all clients  ------ server_send_broadcast
+
 $(document).ready(function(){
+    ////step 2 Server send bradcast to all node
+    socket.on("Sever_send_ESP_Json",function(Json_from_Server){
+        alert("pH value: "+Json_from_Server.pH);
+        //alert("hello new day");
+    });
+
+    
     //alert("hello new day");
     $("#loginForm").show();
     $("#chatForm").hide();
