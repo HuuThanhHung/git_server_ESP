@@ -10,15 +10,61 @@
 
         </script>
         <link rel = "stylesheet" type = "text/css" href = "layout.css">
+        <style >
+            label{
+              font-family: "Comic Sans MS", cursive, sans-serif;
+            }
+            text{
+                font-family:Arial;
+            }
+        </style>
     </head>
     <body>
         <div id = "wrapper">
-            <div id = "loginForm">
-                <h3>Please enter your name</h3> 
-                <input type="text" id = "txtUsername" /> 
-                <input type="button" value = "Register" id = "btnRegister" /> 
-            </div>
-            <div id = "JsonDisplay">
+            <form id = "loginForm">
+                <h3>
+                    <label for="tb_Usrname" id = "l_UrsNa">User Name</label> 
+                    <input type="text" id = "tb_Usrname" /> 
+
+                    <label for="tb_Psw" id = "l_Psw">Password</label>
+                    <input type="password" id = "tb_Psw" />
+
+                    <input type="button" value = "Log in" id = "btn_LogIn" />                           
+                    <input type="button" value = "Sign up" id = "btn_SignUp" /> 
+                    <br>
+                    <label id ="l_LoginFailed">Log In failed!  Please sign up first</label>
+                </h3> 
+            </form>
+            <form id = "signupForm">
+                <div>
+                    <label id = "l_SignUpName">NAME</label>
+                    <br>
+                    <input type="text" id = "tb_SignUpFirstNa" />
+                    <input type="text" id = "tb_SignUpLastNa" />
+                    <br>
+                    <label for="tb_SignUpFirstNa" id = "l_SignUpFirstNa">First</label>
+                    <label for="tb_SignUpLastNa" id = "l_SignUpLastNa" >Last</label>
+                    
+                </div>
+                <br>
+                <br>
+                <div>
+                    <label for="tb_SignUpUsrNa" id = "l_SignUpUsrNa">USER NAME</label>
+                    <br>
+                    <input type="text" id = "tb_SignUpUsrNa" />
+                </div>
+                <br>
+                <br>
+                <div>
+                    <label for="tb_SigUpPassWord" id = "l_SignUpPsw" >PASSWORD</label>
+                    <br>
+                    <input type="password" id = "tb_SigUpPassWord" />
+                </div>
+                <br>
+                <br>
+                <input type="button" value = "Sign up" id = "btn_SignUp2" />
+            </form>
+            <form id = "JsonDisplay">
                 <div id = "fpH">
                     <h3>pH Value</h3> 
                     <div id = "boxpH"></div> 
@@ -37,30 +83,8 @@
                     <div id = "boxpumpStatus"></div> 
                 </div>
 
-            </div>
-            <div id = "chatForm">
-                <div id = "left">
-                    <div id = "boxTitle">User online</div>
-                    <div id = "boxContent"></div>
-                </div>
-
-
-                <div id = "right">
-                    <div id = "sayHi">Hello <span id = "currenUser">HuuThanhHung</span>
-                        <input type="button" id = "btnLogout" value = "Logout"> 
-                    </div> 
-                    
-                    <div id = "listMessage">
-                    </div>
-					<div id = "notify">
-                        
-                    </div>
-                    <input type="text" id = "txtMessage">
-                    <input type="button" id = "btnSendMessage" value = "Send">
-
-                </div>
-
-            </div>
+            </form>
+            
         </div>
     <body>
 <html>

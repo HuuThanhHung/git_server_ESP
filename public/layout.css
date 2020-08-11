@@ -1,7 +1,23 @@
-#wrapper{width: 600px ;margin : auto}
-#txtUsername{background-color: transparent; border:solid 1px black}
+/*form*/
+#wrapper{width: 1000px ;margin : auto}
+#signupForm{margin-left: 30%}
+
+/*textbox*/
+#tb_Usrname{background-color: transparent; border:solid 1px;height: 25px;}
+#tb_Psw{background-color: transparent; border:solid 1px black;height: 25px;}
+#tb_SignUpLastNa{margin-left: 10px;height: 25px;}
+#tb_SignUpFirstNa, #tb_SignUpUsrNa, #tb_SigUpPassWord{height: 25px;}
 
 
+/*button*/
+#btn_LogIn  {background-color: #8dd8eb;border: blanchedalmond;border-radius: 8px;color: rgb(3, 3, 3);padding: 5px 10px;text-align: center;display: inline-block;font-size: 16px; left: 20}
+#btn_SignUp, #btn_SignUp2{background-color: #8debcf;border: blanchedalmond;border-radius: 8px;color: rgb(3, 3, 3);padding: 5px 10px;text-align: center;display: inline-block;font-size: 16px;}
+
+/*lable*/
+#l_SignUpName, #l_SignUpPsw, #l_SignUpUsrNa{font-family: "Comic Sans MS", cursive, sans-serif;font-weight: bold;}
+#l_SignUpLastNa{margin-left: 150px;font-size: 15px;font-style: italic;}
+#l_SignUpFirstNa{font-size: 15px;font-style: italic;}
+#l_LoginFailed{color: red;font-style: italic;}
 
 #left,  #right{min-height: 30px}
 #left{width:30% ;float:left;background-color: #07f2d3}

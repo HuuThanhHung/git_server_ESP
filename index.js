@@ -1,5 +1,6 @@
 // set up port, express for server
 var express = require("express");
+var Excel = require("exceljs");
 const { emit } = require("process");
 const { Socket } = require("dgram");
 var app = express();
@@ -21,7 +22,8 @@ function PareseJSONdata(JsonData){
         return null;
     }
 }
- 
+var workbook = new Excel.Workbook(); 
+var filename = "database.xlsx";
   
 
 io.on("connection", function(socket) {	
@@ -46,8 +48,39 @@ io.on("connection", function(socket) {
     });
 
     // ================ Server and another node =================
+    //step 3.1 client request login
+    socket.on("user_login",function(LogIndata){
+        console.log(LogIndata.name);//debug
+        console.log(LogIndata.password)//debug
 
-
+        //step 3.2 server check password and send back response      
+        workbook.xlsx.readFile(filename).then(function() {
+            var worksheet = workbook.getWorksheet("UserInfor");
+            console.log("Number of row "+worksheet.rowCount);
+            for(i =1; i <= worksheet.rowCount; i++)
+            {
+                var row = worksheet.getRow(i);
+                console.log(row.getCell("A").value);
+                console.log(row.getCell("B").value);
+                console.log(row.getCell("C").value);
+                console.log(row.getCell("D").value);
+                if(LogIndata.name == row.getCell("A").value)
+                {   
+                    socket.emit("login_response_success");
+                }
+                else
+                {
+                    var str ="Please Sign Up before Log In";
+                    socket.emit("login_response_failed",str);
+                }
+            }
+            
+        });
+        
+    });
+    
+    
+    
 });
 
 app.get("/",function(req, res){
