@@ -1,6 +1,11 @@
 
+<<<<<<< HEAD
 var socket = io("http://localhost:1805")
 //var socket = io("http://3.18.143.29:1805")
+=======
+//var socket = io("http://localhost:1805")
+var socket = io("http://3.18.143.29:1805")
+>>>>>>> 9d90d219cd179513513311dc61f52344cc7fd1a6
 
 $(document).ready(function(){
     $("#tb_Usrname").html("");
