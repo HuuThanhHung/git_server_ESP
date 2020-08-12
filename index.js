@@ -61,23 +61,64 @@ io.on("connection", function(socket) {
             {
                 var row = worksheet.getRow(i);
                 console.log(row.getCell("A").value);
-                console.log(row.getCell("B").value);
-                console.log(row.getCell("C").value);
-                console.log(row.getCell("D").value);
-                if(LogIndata.name == row.getCell("A").value)
+                //console.log(row.getCell("B").value);
+                //console.log(row.getCell("C").value);
+                //console.log(row.getCell("D").value);
+                if(LogIndata.name == row.getCell("A").value && LogIndata.password == row.getCell("B").value)
                 {   
                     socket.emit("login_response_success");
                 }
                 else
                 {
-                    var str ="Please Sign Up before Log In";
-                    socket.emit("login_response_failed",str);
+                    socket.emit("login_response_failed");
                 }
             }
             
         });
         
     });
+
+    //sign up data recieve from client
+    socket.on("user_signup",function(SignUpdata){      
+        workbook.xlsx.readFile(filename).then(function() {
+            var worksheet = workbook.getWorksheet("UserInfor");
+            
+            var i = 0;
+            var breakTheLoop = false;
+            var count = worksheet.rowCount;
+            var Endrow;
+            console.log("Number of row "+  count);//debug
+            do{
+                i = i + 1;
+                var row = worksheet.getRow(i);
+                
+                if(SignUpdata.UrsName == row.getCell("A").value)
+                {
+                    socket.emit("signup_response_failed");
+                    breakTheLoop = true;
+                }
+            } while (i <= count && !breakTheLoop);
+            Endrow = i;
+            console.log(SignUpdata.UrsName);//debug
+            if(!breakTheLoop)//not found any name same
+            {
+                socket.emit("signup_response_success");
+                var Ar1 = [];
+                for(var j in SignUpdata) {
+                    Ar1.push(SignUpdata[j]);
+                }
+                console.log(Ar1);//debug
+                worksheet.addRow(Ar1,3);
+                workbook.xlsx.writeFile(filename).then(function() {
+                    console.log('Array added and then file saved.')
+                });
+            }
+            
+            
+        });
+
+    });
+
     
     
     

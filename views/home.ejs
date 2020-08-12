@@ -21,19 +21,18 @@
     </head>
     <body>
         <div id = "wrapper">
-            <form id = "loginForm">
-                <h3>
-                    <label for="tb_Usrname" id = "l_UrsNa">User Name</label> 
-                    <input type="text" id = "tb_Usrname" /> 
+            <form id = "loginForm">               
+                <label for="tb_Usrname" id = "l_UrsNa">User Name</label> 
+                <input type="text" id = "tb_Usrname" /> 
 
-                    <label for="tb_Psw" id = "l_Psw">Password</label>
-                    <input type="password" id = "tb_Psw" />
+                <label for="tb_Psw" id = "l_Psw">Password</label>
+                <input type="password" id = "tb_Psw" />
 
-                    <input type="button" value = "Log in" id = "btn_LogIn" />                           
-                    <input type="button" value = "Sign up" id = "btn_SignUp" /> 
-                    <br>
-                    <label id ="l_LoginFailed">Log In failed!  Please sign up first</label>
-                </h3> 
+                <input type="button" value = "Log in" id = "btn_LogIn" />                           
+                <input type="button" value = "Sign up" id = "btn_SignUp" /> 
+                <br>
+                <label id = "l_LoginFailed">Wrong User name or password!</label>
+                
             </form>
             <form id = "signupForm">
                 <div>
@@ -52,6 +51,7 @@
                     <label for="tb_SignUpUsrNa" id = "l_SignUpUsrNa">USER NAME</label>
                     <br>
                     <input type="text" id = "tb_SignUpUsrNa" />
+                    <label id = "l_SignupFailed">This User name has already used!!</label>
                 </div>
                 <br>
                 <br>
@@ -62,6 +62,7 @@
                 </div>
                 <br>
                 <br>
+                <button onclick="goBack()" id = "btn_goback">Back</button>
                 <input type="button" value = "Sign up" id = "btn_SignUp2" />
             </form>
             <form id = "JsonDisplay">
