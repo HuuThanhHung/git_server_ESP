@@ -3,19 +3,24 @@ var socket = io("http://localhost:1805")
 //var socket = io("http://3.18.143.29:1805")
 
 $(document).ready(function(){
+    
     $("#tb_Usrname").html("");
     $("#tb_Psw").html("");
     $("#l_LoginFailed").hide();
+    $("#l_SignupFail").hide();
+    $("#l_SignupFailed").hide();
+    $("#l_SignupFailedd").hide();
     $("#loginForm").show();
     $("#signupForm").hide();
-    $("#l_SignupFailed").hide();
     $("#JsonDisplay").hide();
     $("#chatForm").hide();
     
     //sign up
     $("#btn_SignUp").click(function(){
         $("#loginForm").hide();
-        $("#signupForm").show(200);
+        $("#signupForm").show(250);
+        
+
         $("#tb_SignUpFirstNa").html("");
         $("#tb_SignUpLastNa").html("");
         $("#tb_SignUpUsrNa").html("");
@@ -27,21 +32,42 @@ $(document).ready(function(){
             var t_LastNa = $("#tb_SignUpLastNa").val();
             var t_UsrNa = $("#tb_SignUpUsrNa").val();
             var t_PassWord = $("#tb_SigUpPassWord").val();
-            var SignUpdata = {
-                UrsName: t_UsrNa, 
-                Password: t_PassWord,
-                FirtName: t_FirstNa, 
-                LastName: t_LastNa
-                
-            };
-            socket.emit("user_signup",SignUpdata);
-            socket.on("signup_response_success",function(){
-                //alert("sign up success");//debug
-                $("#signupForm").hide();
+            if(t_PassWord != "" && t_UsrNa != "")
+            {
+                var SignUpdata = {
+                    UrsName: t_UsrNa, 
+                    Password: t_PassWord,
+                    FirtName: t_FirstNa, 
+                    LastName: t_LastNa
+                    
+                };
+                socket.emit("user_signup",SignUpdata);
+            }
+            else if(t_PassWord == "")
+            {
+                $("#l_SignupFailed").show();
+            }
+            else if(t_UsrNa == "")
+            {
+                if($("#l_SignupFail").is(':visible'))
+                {
+                    $("#l_SignupFail").hide();
+                }
+                $("#l_SignupFailedd").show(100);
+            }
+            socket.on("signup_response_success",function(dataHello){
+                alert(dataHello);
+                $("#signupForm").hide();              
+                $("#boxLastName").html("");     
+                $("#boxLastName").append("<div>"+ dataHello +"</div>");
                 $("#JsonDisplay").show(200);
             });
             socket.on("signup_response_failed",function(){
-                $("#l_SignupFailed").show();
+                if($("#l_SignupFailedd").is(':visible'))
+                {
+                    $("#l_SignupFailedd").hide();
+                }
+                $("#l_SignupFail").show(100);
             });
         });
     });
@@ -68,8 +94,11 @@ $(document).ready(function(){
            //alert(data_failed);
             $("#l_LoginFailed").show();         
         })
-        socket.on("login_response_success",function(){
-            $("#loginForm").hide(100);         
+        socket.on("login_response_success",function(datahello){
+            $("#loginForm").hide(100); 
+            $("#boxLastName").html("");
+            $("#boxLastName").append("<div>Hi! "+ datahello +"</div>");
+            $("#JsonDisplay").show(200);        
             $("#JsonDisplay").show(200);           
             //step 2 Server send bradcast to all node
             socket.on("Sever_send_ESP_Json",function(Json_from_Server){

@@ -3,6 +3,7 @@ var express = require("express");
 var Excel = require("exceljs");
 const { emit } = require("process");
 const { Socket } = require("dgram");
+const { stringify } = require("querystring");
 var app = express();
 app.use(express.static("./public"));
 app.set("view engine", "ejs");// set view when render home page
@@ -64,9 +65,11 @@ io.on("connection", function(socket) {
                 //console.log(row.getCell("B").value);
                 //console.log(row.getCell("C").value);
                 //console.log(row.getCell("D").value);
+                
                 if(LogIndata.name == row.getCell("A").value && LogIndata.password == row.getCell("B").value)
                 {   
-                    socket.emit("login_response_success");
+                    var str_1 =row.getCell("D").value;
+                    socket.emit("login_response_success",str_1); 
                 }
                 else
                 {
@@ -82,7 +85,12 @@ io.on("connection", function(socket) {
     socket.on("user_signup",function(SignUpdata){      
         workbook.xlsx.readFile(filename).then(function() {
             var worksheet = workbook.getWorksheet("UserInfor");
-            
+            worksheet.columns = [
+                {key: 'UsrName', header: 'UserName'}, 
+                {key: 'Password', header: 'Password'}, 
+                {key: 'FirtName', header: 'FirstName'}, 
+                {key: 'LastName', header: 'LastName'
+            }];
             var i = 0;
             var breakTheLoop = false;
             var count = worksheet.rowCount;
@@ -97,21 +105,24 @@ io.on("connection", function(socket) {
                     socket.emit("signup_response_failed");
                     breakTheLoop = true;
                 }
-            } while (i <= count && !breakTheLoop);
-            Endrow = i;
-            console.log(SignUpdata.UrsName);//debug
+            } while (i < count && !breakTheLoop);
+            
             if(!breakTheLoop)//not found any name same
             {
-                socket.emit("signup_response_success");
-                var Ar1 = [];
-                for(var j in SignUpdata) {
-                    Ar1.push(SignUpdata[j]);
-                }
-                console.log(Ar1);//debug
-                worksheet.addRow(Ar1,3);
+                const tdata = [{
+                    UsrName : SignUpdata.UrsName,
+                    Password : SignUpdata.Password,
+                    FirtName : SignUpdata.FirtName,
+                    LastName : SignUpdata.LastName
+                }]; 
+                tdata.forEach((item) => {
+                   worksheet.addRow(item);
+                });
                 workbook.xlsx.writeFile(filename).then(function() {
                     console.log('Array added and then file saved.')
                 });
+                var str_1 =SignUpdata.LastName;
+                socket.emit("login_response_success",str_1); 
             }
             
             
