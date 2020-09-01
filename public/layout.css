@@ -21,13 +21,14 @@
 #l_SignUpFirstNa{font-size: 15px;font-style: italic;}
 #l_SignupFailedd, #l_SignupFailed, #l_SignupFail, #l_LoginFailed{color: red;}
 #l_hello{color: rgb(47, 252, 252);}
-
+/*chart*/
+#myChart{height: 100;width: 400;}
 /*form*/
 #loginForm{background-image: image("/views/login_form.jpg");}
-
+/*tb*/
 #left,  #right{min-height: 30px}
-#left{width:70% ;float:left;}
-#right{width:30% ;float:right;}
+#left{width:50% ;float:left;}
+#right{width:50% ;float:right;}
 
 #boxTitle{border: solid 1px black;padding: 5px;text-align: center; font-weight: bold}
 #boxContent{border: solid 1px black;border-top: none; padding: 5px;text-align: center}
@@ -36,3 +37,4 @@
 #listMessage{height: 200px;background-color: #044857; margin-bottom: 15px}
 
 #txtMessage{background-color: transparent;border : solid 1px black}
+/*<div id = "boxLastName"></div>*/

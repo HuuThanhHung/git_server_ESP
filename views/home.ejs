@@ -5,6 +5,7 @@
         <script src = "jquery.js"></script>
         <script src = "../socket.io/socket.io.js"></script>
         <script src = "handling.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
         <script>
 
 
@@ -71,27 +72,46 @@
             </form>
             <form id = "JsonDisplay">
                 <div id = "Right">                                 
-                    <div id = "boxLastName"></div>   
+                       
+                    <div id = "fTemp">
+                        <label>Temperature Value </label> 
+                        <div id = "boxTemp"></div> 
+                    </div>
+                    <br>
+                    <div id = "fPumpStatus6">
+                        <label>Pump Status 2</label> 
+                        <div id = "boxpumpStatus6"></div> 
+                    </div> 
+                    <br>
+                    <div id = "fStatus">
+                        <label>Process</label> 
+                        <div id = "boxStatus"></div> 
+                    </div>
+                    <br>
                 </div>
                 <div id = "left">
                     <div id = "fpH">
-                        <h3>pH Value</h3> 
+                        <label>pH Value</label> 
                         <div id = "boxpH"></div> 
                         
                     </div>
-                    <div id = "fEC">
-                        <h3>EC Value</h3> 
-                        <div id = "boxEC"></div> 
-                    </div>
-                    <div id = "fTemp">
-                        <h3>Temperature Value</h3> 
-                        <div id = "boxTemp"></div> 
-                    </div>
-                    <div id = "fPumpStatus">
-                        <h3>Pump Status</h3> 
-                        <div id = "boxpumpStatus"></div> 
-                    </div>
+                    <br>
+                    <div id = "fPumpStatus7">
+                        <label>Pump Status 1</label> 
+                        <div id = "boxpumpStatus7"></div> 
+                    </div>   
+                    <br>
+                    <div id = "fValve">
+                        <label>Valve Status </label> 
+                        <div id = "boxValveStatus2"></div> 
+                    </div> 
+                    <br>
                 </div>
+                <canvas id="myChart" ></canvas>
+                <script src = "Line_chart.js">
+                    
+                </script>
+
             </form>
             
         </div>

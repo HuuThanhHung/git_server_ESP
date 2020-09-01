@@ -12,7 +12,7 @@ app.set("views", "./views");
 var server = require("http").createServer(app);
 var io = require("socket.io")(server);// set up SOCKET.IO
 server.listen(1805);
-
+var req,res;
 //create function to parse JSON data to object
 function PareseJSONdata(JsonData){
     try {
@@ -25,10 +25,14 @@ function PareseJSONdata(JsonData){
 }
 var workbook = new Excel.Workbook(); 
 var filename = "database.xlsx";
-  
+var date_ob = new Date(); 
+var t_day = date_ob.getDate();
+var t_hour = date_ob.getHours();
+var t_minute = date_ob.getMinutes();
 
 io.on("connection", function(socket) {	
-    console.log(socket.id);//debug
+    //console.log(socket.id);//debug
+    //console.log(t_day+" "+t_hour+" "+t_minute);//debug
     // ================ Server and ESP ==========================
     //step 1.0 create connection with ESP
     socket.on("connect_ESP_server",function(data_from_ESP){
@@ -39,13 +43,65 @@ io.on("connection", function(socket) {
     socket.on("Json_from_ESP",function(Json_from_ESP){
         // data Json format from ESP { pH: 18, EC: 5, Temp: 19, PumpStatus: 97 }
         console.log(Json_from_ESP.pH);//debug
-        console.log(Json_from_ESP.EC);//debug
+        console.log(Json_from_ESP.Status);//debug
         console.log(Json_from_ESP.Temp);//debug
         console.log(JSON.stringify(Json_from_ESP.PumpStatus));//debug
-        
+        //save data from ESP to excel file when recieved status True
+        if(Json_from_ESP.Status)
+        {
+            var ArrDatabase = [];
+            workbook.xlsx.readFile(filename).then(function(){
+                var worksheet = workbook.getWorksheet("Data");
+                worksheet.columns = [
+                    {key: 'Time', header: 'Time'}, 
+                    {key: 'pH', header: 'pH'}, 
+                    {key: 'Temperature', header: 'Temperature'}
+                ];
+                var rowNum = worksheet.rowCount;
+                var currentRow = worksheet.getRow(rowNum);
+
+                console.log("rowCount is "+  rowNum);//debug
+                console.log(currentRow.getCell("A").value);//debug
+
+                const tdataPh = [{
+                    Time : t_day+"|"+t_hour+"|"+t_minute,
+                    pH : Json_from_ESP.pH,
+                    Temperature : Json_from_ESP.Temp
+                }]; 
+                tdataPh.forEach((item) => {
+                worksheet.addRow(item);
+                });
+                var newRowNum = worksheet.rowCount;;
+                var ArrDB_time = [];
+                var ArrDB_pH = [];
+                var ArrDB_temp = [];
+                var ofset = 10;// how many column in chart you want is here
+                var ArrId = ofset -1;
+                for(CountDwn = newRowNum;CountDwn > newRowNum - ofset;CountDwn--)
+                {
+                    var CurRow = worksheet.getRow(CountDwn);
+                    ArrDB_time[ArrId] = CurRow.getCell("A").value
+                    ArrDB_pH[ArrId] = CurRow.getCell("B").value
+                    ArrDB_temp[ArrId] = CurRow.getCell("C").value
+                    ArrId =  ArrId -1;
+                }
+               
+                var db_chart = {
+                    db_time: ArrDB_time, 
+                    db_pH: ArrDB_pH,
+                    db_temp: ArrDB_temp                    
+                };
+                console.log(db_chart.db_pH);//debug 
+                workbook.xlsx.writeFile(filename).then(function() {
+                    console.log('pH Temp are added and then file saved.')
+                });
+            });
+        }
         //step 2 Server send bradcast to all node
         //when receive data from ESP server will send new data broadcast to all node
         socket.broadcast.emit("Sever_send_ESP_Json",Json_from_ESP);
+        
+
     });
 
     // ================ Server and another node =================
@@ -70,6 +126,7 @@ io.on("connection", function(socket) {
                 {   
                     var str_1 =row.getCell("D").value;
                     socket.emit("login_response_success",str_1); 
+                    socket.broadcast.emit("chart_here")
                 }
                 else
                 {
@@ -89,8 +146,8 @@ io.on("connection", function(socket) {
                 {key: 'UsrName', header: 'UserName'}, 
                 {key: 'Password', header: 'Password'}, 
                 {key: 'FirtName', header: 'FirstName'}, 
-                {key: 'LastName', header: 'LastName'
-            }];
+                {key: 'LastName', header: 'LastName'}
+            ];
             var i = 0;
             var breakTheLoop = false;
             var count = worksheet.rowCount;
@@ -123,6 +180,7 @@ io.on("connection", function(socket) {
                 });
                 var str_1 =SignUpdata.LastName;
                 socket.emit("login_response_success",str_1); 
+                
             }
             
             
@@ -137,5 +195,10 @@ io.on("connection", function(socket) {
 
 app.get("/",function(req, res){
     res.render("home");
+    
+}); 
 
-});
+app.get("/signup/",function(req, res){
+    res.render("signup");
+    
+}); 

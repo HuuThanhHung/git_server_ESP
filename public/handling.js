@@ -3,20 +3,43 @@ var socket = io("http://localhost:1805")
 //var socket = io("http://3.18.143.29:1805")
 
 $(document).ready(function(){
-    
+    $("#loginForm").show(200);
+    $("#signupForm").hide();
     $("#tb_Usrname").html("");
     $("#tb_Psw").html("");
     $("#l_LoginFailed").hide();
     $("#l_SignupFail").hide();
     $("#l_SignupFailed").hide();
     $("#l_SignupFailedd").hide();
-    $("#loginForm").show();
-    $("#signupForm").hide();
     $("#JsonDisplay").hide();
     $("#chatForm").hide();
-    
+    function addData(chart, t_time, t_pH, t_pHVal,t_temp, t_tempval) {
+        chart.data.labels.push(t_time);
+        //chart.data.datasets.forEach((dataset) => {
+            //dataset.data.push(data);
+        //});
+        //alert(chart.data.datasets[0].label)
+       // alert(chart.data.datasets[1].label)
+        var i = 0;
+        for(i=0; i<2;i++)
+        {
+            if(chart.data.datasets[i].label == t_pH)
+            {
+                //alert("aaaaa")
+                chart.data.datasets[i].data.push(t_pHVal); 
+                
+            }
+            else if(chart.data.datasets[i].label == t_temp)
+            {
+                chart.data.datasets[i].data.push(t_tempval); 
+            }
+        }
+
+        chart.update(0);
+    }
     //sign up
     $("#btn_SignUp").click(function(){
+        //location.href='/signup/';
         $("#loginForm").hide();
         $("#signupForm").show(250);
         
@@ -55,19 +78,12 @@ $(document).ready(function(){
                 }
                 $("#l_SignupFailedd").show(100);
             }
-            socket.on("signup_response_success",function(dataHello){
-                alert(dataHello);
-                $("#signupForm").hide();              
-                $("#boxLastName").html("");     
-                $("#boxLastName").append("<div>"+ dataHello +"</div>");
-                $("#JsonDisplay").show(200);
-            });
             socket.on("signup_response_failed",function(){
                 if($("#l_SignupFailedd").is(':visible'))
                 {
-                    $("#l_SignupFailedd").hide();
+                    $("#l_SignupFailedd").hide(100);
                 }
-                $("#l_SignupFail").show(100);
+                $("#l_SignupFail").show(300);
             });
         });
     });
@@ -94,32 +110,32 @@ $(document).ready(function(){
            //alert(data_failed);
             $("#l_LoginFailed").show();         
         })
-        socket.on("login_response_success",function(datahello){
-            $("#loginForm").hide(100); 
-            $("#boxLastName").html("");
-            $("#boxLastName").append("<div>Hi! "+ datahello +"</div>");
-            $("#JsonDisplay").show(200);        
-            $("#JsonDisplay").show(200);           
-            //step 2 Server send bradcast to all node
-            socket.on("Sever_send_ESP_Json",function(Json_from_Server){
-                $("#boxpH").html("");
-                $("#boxEC").html("");
-                $("#boxTemp").html("");
-                $("#boxpumpStatus").html("");
-                    
-                $("#boxpH").append("<div class = 'user'>"+ Json_from_Server.pH +"</div>");
-                $("#boxEC").append("<div class = 'user'>"+ Json_from_Server.EC +"</div>");
-                $("#boxTemp").append("<div class = 'user'>"+ Json_from_Server.Temp +"</div>");
-                $("#boxpumpStatus").append("<div class = 'user'>"+ Json_from_Server.PumpStatus +"</div>");
-
+        
+    }); 
+    socket.on("login_response_success",function(datahello){
+        $("#loginForm").hide(100); 
+        $("#signupForm").hide(100);
+        $("#boxLastName").html("");
+        $("#boxLastName").append("<div>Hi! "+ datahello +"</div>");
+        $("#JsonDisplay").show(300);              
+        //step 2 Server send bradcast to all node
+        
+        socket.on("Sever_send_ESP_Json",function(PumpStatus){  
+            if(Json_from_Server.Status == true)        
+            {
+                //addData(myChart, "1","pH", "7","temp", "25")
+                //addData(myChart, "2","pH", "12","temp", "28")
+            }
+            $("#boxpH").html("");
+            $("#boxEC").html("");
+            $("#boxTemp").html("");
+            $("#boxpumpStatus").html("");
                 
-            });
-        })
+            $("#boxpH").append("<div class = 'user'>"+ Json_from_Server.pH  + "</div>");
+            $("#boxEC").append("<div class = 'user'>"+ Json_from_Server.Status +"</div>");
+            $("#boxTemp").append("<div class = 'user'>"+ Json_from_Server.Temp +"&deg;C</div>");
+            $("#boxpumpStatus").append("<div class = 'user'>"+ PumpStatus +"</div>");
+            
+        });
     });
-    
-    
-
-    
-    
 });
-
