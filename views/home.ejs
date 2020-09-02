@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset = "utf-8">
-        <title>Demo chat</title>
+        <title>Bach Khoa 2020</title>
         <script src = "jquery.js"></script>
         <script src = "../socket.io/socket.io.js"></script>
         <script src = "handling.js"></script>
@@ -22,7 +22,7 @@
         </style>
     </head>
     <body>
-        <div id = "wrapper">
+        <div id = "wrapper ">
 
             <form id = "loginForm">               
                 <label for="tb_Usrname" id = "l_UrsNa">User Name</label> 
@@ -35,6 +35,9 @@
                 <input type="button" value = "Sign up" id = "btn_SignUp" /> 
                 <br>
                 <label id = "l_LoginFailed">Wrong User name or password!</label>
+                <br>
+                <br>
+                <img id = "BachKhoa" src="BachKhoa_logo.png" width="200" height="200">
                 
             </form>
             <form id = "signupForm">
@@ -75,6 +78,7 @@
                        
                     <div id = "fTemp">
                         <label>Temperature Value </label> 
+                        <img src="temp.jpg" width="20" height="30">
                         <div id = "boxTemp"></div> 
                     </div>
                     <br>
@@ -85,6 +89,7 @@
                     <br>
                     <div id = "fStatus">
                         <label>Process</label> 
+                        <img src="process.gif" width="25" height="25">
                         <div id = "boxStatus"></div> 
                     </div>
                     <br>
@@ -92,6 +97,7 @@
                 <div id = "left">
                     <div id = "fpH">
                         <label>pH Value</label> 
+                        <img src="pH.png" width="20" height="30">
                         <div id = "boxpH"></div> 
                         
                     </div>

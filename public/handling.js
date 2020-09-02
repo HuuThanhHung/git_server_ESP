@@ -13,7 +13,9 @@ $(document).ready(function(){
     $("#l_SignupFailedd").hide();
     $("#JsonDisplay").hide();
     $("#chatForm").hide();
-    function addData(chart, t_time, t_pH, t_pHVal,t_temp, t_tempval) {
+
+    // function add data to chart
+    function addData2Chart(chart, t_time, t_pH, t_pHVal,t_temp, t_tempval) {
         chart.data.labels.push(t_time);
         //chart.data.datasets.forEach((dataset) => {
             //dataset.data.push(data);
@@ -37,6 +39,51 @@ $(document).ready(function(){
 
         chart.update(0);
     }
+
+    function removeData(chart) {
+        chart.data.labels.splice(0, 10);
+        for(i=0;i<2;i++)
+        {
+            chart.data.datasets[i].data.splice(0, 10);
+        }
+        
+
+        chart.update();
+    }
+
+    function checkPumpStatus(Status_Pump)
+    { 
+        var Json_pump_sts =[3]
+        switch (Status_Pump) {
+            case 0:
+                Json_pump_sts= ["Off","Off","Off"]
+                break;
+            case 1:
+                Json_pump_sts= ["Off","Off","On"]
+                break;
+            case 10:
+                Json_pump_sts= ["Off","On","Off"]
+                break;
+            case 11:
+                Json_pump_sts= ["Off","On","On"]
+                break;
+            case 100:
+                Json_pump_sts= ["On","Off","Off"]
+                break;
+            case 111:
+                Json_pump_sts= ["On","On","On"]
+                break;
+            case 101:
+                Json_pump_sts= ["On","Off","On"]
+                break; 
+            case 110:
+                Json_pump_sts= ["On","On","Of"]
+                break;                 
+            }
+            return Json_pump_sts;
+    }
+
+    //==================== Start ====================
     //sign up
     $("#btn_SignUp").click(function(){
         //location.href='/signup/';
@@ -111,7 +158,7 @@ $(document).ready(function(){
             $("#l_LoginFailed").show();         
         })
         
-    }); 
+    });
     socket.on("login_response_success",function(datahello){
         $("#loginForm").hide(100); 
         $("#signupForm").hide(100);
@@ -119,22 +166,49 @@ $(document).ready(function(){
         $("#boxLastName").append("<div>Hi! "+ datahello +"</div>");
         $("#JsonDisplay").show(300);              
         //step 2 Server send bradcast to all node
-        
-        socket.on("Sever_send_ESP_Json",function(PumpStatus){  
+        socket.on("Sever_send_chart_Json",function(db_chart){
+
+            //for(i =0;i < db_chart.ArrDB_pH.count();i++)
+            //{
+            removeData(myChart);
+            for(i=0;i<10;i++)
+            {
+                addData2Chart(myChart, db_chart.db_time[i],"pH", db_chart.db_pH[i],"temp", db_chart.db_temp[i]);
+            }
+            //alert("add chart done!!")//debug
+            
+            //}
+        });
+        socket.on("Sever_send_ESP_Json",function(Json_from_Server){
+            ArrPumstatus =[];
+            $("#boxpumpStatus6").html("");
+            $("#boxpumpStatus7").html("");  
+            $("#boxValveStatus2").html("");
+            $("#boxStatus").html("");
+            
             if(Json_from_Server.Status == true)        
             {
-                //addData(myChart, "1","pH", "7","temp", "25")
-                //addData(myChart, "2","pH", "12","temp", "28")
+                $("#boxpH").html("");
+                $("#boxTemp").html("");
+                $("#boxpH").append("<div class = 'user'>"+ Json_from_Server.pH  + "</div>");
+                $("#boxTemp").append("<div class = 'user'>"+ Json_from_Server.Temp +"&deg;C</div>");
+                $("#boxStatus").append("<div class = 'user' >Running ...</div>");
+                document.getElementById("boxStatus").style.color = "blue";
+
             }
-            $("#boxpH").html("");
-            $("#boxEC").html("");
-            $("#boxTemp").html("");
-            $("#boxpumpStatus").html("");
-                
-            $("#boxpH").append("<div class = 'user'>"+ Json_from_Server.pH  + "</div>");
-            $("#boxEC").append("<div class = 'user'>"+ Json_from_Server.Status +"</div>");
-            $("#boxTemp").append("<div class = 'user'>"+ Json_from_Server.Temp +"&deg;C</div>");
-            $("#boxpumpStatus").append("<div class = 'user'>"+ PumpStatus +"</div>");
+            else
+            {
+                $("#boxStatus").append("<div class = 'user'>Stop</div>");
+                document.getElementById("boxStatus").style.color = "red";
+            }
+           
+            ArrPumstatus = checkPumpStatus(Json_from_Server.PumpStatus)          
+            $("#boxValveStatus2").append("<div class = 'user'>"+ ArrPumstatus[0] +"</div>");
+            $("#boxpumpStatus6").append("<div class = 'user'>"+ ArrPumstatus[1] +"</div>");
+            $("#boxpumpStatus7").append("<div class = 'user'>"+ ArrPumstatus[2] +"</div>"); 
+            
+            
+            
             
         });
     });
