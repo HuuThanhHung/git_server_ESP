@@ -12,8 +12,8 @@
 
 /*button*/
 #btn_LogIn  {background-color: #8dd8eb;border: blanchedalmond;border-radius: 8px;color: rgb(3, 3, 3);padding: 5px 10px;text-align: center;display: inline-block;font-size: 16px; left: 20}
- #btn_SignUp, #btn_SignUp2{background-color: #8debcf;border: blanchedalmond;border-radius: 8px;color: rgb(3, 3, 3);padding: 5px 10px;text-align: center;display: inline-block;font-size: 16px;}
- #btn_goback{background-color: #f2f7f6;border: blanchedalmond;border-radius: 8px;color: rgb(3, 3, 3);padding: 5px 10px;text-align: center;display: inline-block;font-size: 16px;}
+#btn_SignUp, #btn_SignUp2{background-color: #8debcf;border: blanchedalmond;border-radius: 8px;color: rgb(3, 3, 3);padding: 5px 10px;text-align: center;display: inline-block;font-size: 16px;}
+#btn_goback{background-color: #f2f7f6;border: blanchedalmond;border-radius: 8px;color: rgb(3, 3, 3);padding: 5px 10px;text-align: center;display: inline-block;font-size: 16px;}
 
 /*lable*/
 #l_SignUpName, #l_SignUpPsw, #l_SignUpUsrNa{font-family: "Comic Sans MS", cursive, sans-serif;font-weight: bold;}
@@ -29,9 +29,10 @@
 /*form*/
 #loginForm{background-image: image("/views/login_form.jpg");}
 /*tb*/
-#left,  #right{min-height: 30px}
+#left,  #right,#Mid{min-height: 30px}
 #left{width:50% ;float:left;}
 #right{width:50% ;float:right;}
+
 /*image*/
 #BachKhoa{margin-left: 250 ;}
 

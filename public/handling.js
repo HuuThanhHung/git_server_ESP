@@ -56,31 +56,63 @@ $(document).ready(function(){
         var Json_pump_sts =[3]
         switch (Status_Pump) {
             case 0:
-                Json_pump_sts= ["Off","Off","Off"]
+                Json_pump_sts= ["Stop","Stop","Stop"]
                 break;
             case 1:
-                Json_pump_sts= ["Off","Off","On"]
+                Json_pump_sts= ["Stop","Stop","Running"]
                 break;
             case 10:
-                Json_pump_sts= ["Off","On","Off"]
+                Json_pump_sts= ["Stop","Running","Stop"]
                 break;
             case 11:
-                Json_pump_sts= ["Off","On","On"]
+                Json_pump_sts= ["Stop","Running","Running"]
                 break;
             case 100:
-                Json_pump_sts= ["On","Off","Off"]
+                Json_pump_sts= ["Running","Stop","Stop"]
                 break;
             case 111:
-                Json_pump_sts= ["On","On","On"]
+                Json_pump_sts= ["Running","Running","Running"]
                 break;
             case 101:
-                Json_pump_sts= ["On","Off","On"]
+                Json_pump_sts= ["Running","Stop","Running"]
                 break; 
             case 110:
-                Json_pump_sts= ["On","On","Of"]
+                Json_pump_sts= ["Running","Running","Stop"]
                 break;                 
             }
             return Json_pump_sts;
+    }
+
+    function checkImage(Status_Pump)
+    { 
+        var image_arr =[3]
+        switch (Status_Pump) {
+            case 0:
+                image_arr = ["red","red","red"]
+                break;
+            case 1:
+                image_arr = ["red","red","green"]
+                break;
+            case 10:
+                image_arr = ["red","green","red"]
+                break;
+            case 11:
+                image_arr = ["red","green","green"]
+                break;
+            case 100:
+                image_arr = ["green","red","red"]
+                break;
+            case 111:
+                image_arr = ["green","green","green"]
+                break;
+            case 101:
+                image_arr = ["red","red","green"]
+                break; 
+            case 110:
+                image_arr = ["green","green","red"]
+                break;                 
+            }
+            return image_arr;
     }
 
     //==================== Start ====================
@@ -159,6 +191,7 @@ $(document).ready(function(){
         })
         
     });
+
     socket.on("login_response_success",function(datahello){
         $("#loginForm").hide(100); 
         $("#signupForm").hide(100);
@@ -166,13 +199,23 @@ $(document).ready(function(){
         $("#boxLastName").append("<div>Hi! "+ datahello +"</div>");
         $("#JsonDisplay").show(300);              
         //step 2 Server send bradcast to all node
+        socket.on("Old_data_from_server",function(db_chart){
+            removeData(myChart);
+            for(i=0;i<10;i++)
+            {   
+               
+                addData2Chart(myChart, db_chart.db_time[i],"pH", db_chart.db_pH[i],"temp", db_chart.db_temp[i]);
+            }
+
+        });
         socket.on("Sever_send_chart_Json",function(db_chart){
 
             //for(i =0;i < db_chart.ArrDB_pH.count();i++)
             //{
             removeData(myChart);
             for(i=0;i<10;i++)
-            {
+            {   
+               
                 addData2Chart(myChart, db_chart.db_time[i],"pH", db_chart.db_pH[i],"temp", db_chart.db_temp[i]);
             }
             //alert("add chart done!!")//debug
@@ -184,32 +227,43 @@ $(document).ready(function(){
             $("#boxpumpStatus6").html("");
             $("#boxpumpStatus7").html("");  
             $("#boxValveStatus2").html("");
-            $("#boxStatus").html("");
-            
-            if(Json_from_Server.Status == true)        
+           
+            //alert(Json_from_Server.Status)
+            if(Json_from_Server.Status == 1)        
             {
                 $("#boxpH").html("");
                 $("#boxTemp").html("");
                 $("#boxpH").append("<div class = 'user'>"+ Json_from_Server.pH  + "</div>");
                 $("#boxTemp").append("<div class = 'user'>"+ Json_from_Server.Temp +"&deg;C</div>");
-                $("#boxStatus").append("<div class = 'user' >Running ...</div>");
-                document.getElementById("boxStatus").style.color = "blue";
+                
 
             }
-            else
+            else if(Json_from_Server.Status == 1)
+            { 
+                //do nothing
+            }
+            if(Json_from_Server.Status == 2)
             {
+                $("#boxStatus").html("");
+                $("#boxStatus").append("<div class = 'user' >Running ...</div>");
+                document.getElementById("boxStatus").style.color = "blue";
+            }
+            if(Json_from_Server.Status == 3)
+            {
+                $("#boxStatus").html("");
                 $("#boxStatus").append("<div class = 'user'>Stop</div>");
                 document.getElementById("boxStatus").style.color = "red";
             }
-           
-            ArrPumstatus = checkPumpStatus(Json_from_Server.PumpStatus)          
-            $("#boxValveStatus2").append("<div class = 'user'>"+ ArrPumstatus[0] +"</div>");
-            $("#boxpumpStatus6").append("<div class = 'user'>"+ ArrPumstatus[1] +"</div>");
-            $("#boxpumpStatus7").append("<div class = 'user'>"+ ArrPumstatus[2] +"</div>"); 
-            
-            
-            
-            
+
+            ArrPumstatus = checkPumpStatus(Json_from_Server.PumpStatus)
+            ArrImage =   checkImage (Json_from_Server.PumpStatus)  
+            $("#boxValveStatus2").append("<div class = 'user'>"+ ArrPumstatus[2]+"</div>");
+            document.getElementById("boxValveStatus2").style.color = ArrImage[2];
+            $("#boxpumpStatus6").append("<div class = 'user'>"+ ArrPumstatus[0] +"</div>");
+            document.getElementById("boxpumpStatus6").style.color = ArrImage[0];
+            $("#boxpumpStatus7").append("<div class = 'user'>"+ ArrPumstatus[1] +"</div>"); 
+            document.getElementById("boxpumpStatus7").style.color = ArrImage[1];
+   
         });
     });
 });
