@@ -1,5 +1,5 @@
 
-var socket = io("http://localhost:1805")
+//var socket = io("http://localhost:1805")
 //var socket = io("http://3.18.143.29:1805")
 
 $(document).ready(function(){
@@ -114,6 +114,36 @@ $(document).ready(function(){
             }
             return image_arr;
     }
+    function addData2Table(fTime,fpH,fTemp)
+    {
+        //========== Table ============
+        //Compose template string
+        String.prototype.compose = (function (){
+        var re = /\{{(.+?)\}}/g;
+        return function (o){
+        return this.replace(re, function (_, k){
+        return typeof o[k] != 'undefined' ? o[k] : '';
+        });
+        }
+        }());
+        var tbody = $('#myTable').children('tbody');
+        var table = tbody.length ? tbody : $('#myTable');
+        var row = '<tr>'+
+        '<td>{{time}}</td>'+
+        '<td>{{pH}}</td>'+
+        '<td>{{temp}}</td>'+
+        '</tr>';
+        //Add row
+        
+        for(j=0;j<fTime.length;j++)
+        {
+            table.append(row.compose({
+            'time': fTime[j],
+            'pH': fpH[j],
+            'temp': fTemp[j]
+        }));
+        }
+    }
 
     //==================== Start ====================
     //sign up
@@ -201,22 +231,25 @@ $(document).ready(function(){
         $("#Mid").append("<div class = 'user'>"+ MonthDate[0] +" - "+ MonthDate[1] +"</div>");
         //step 2 Server send bradcast to all node
         socket.on("Old_data_from_server",function(db_chart){
+            alert(db_chart.db_pH)
             removeData(myChart);
-            for(i=0;i<10;i++)
+            addData2Table(db_chart.db_time,db_chart.db_pH, db_chart.db_temp);
+            var db_time = db_chart.db_time[i].replace(/(.+?)\s.*/g,"$1")
+            for(i=0;i<db_chart.db_pH.length;i++)
             {   
-                addData2Chart(myChart, db_chart.db_time[i],"pH", db_chart.db_pH[i],"temp", db_chart.db_temp[i]);
+                addData2Chart(myChart, db_time,"pH", db_chart.db_pH[i],"temp", db_chart.db_temp[i]);
             }
-
         });
         socket.on("Sever_send_chart_Json",function(db_chart){
 
             //for(i =0;i < db_chart.ArrDB_pH.count();i++)
             //{
             removeData(myChart);
+            
             for(i=0;i<10;i++)
             {   
-               
-                addData2Chart(myChart, db_chart.db_time[i],"pH", db_chart.db_pH[i],"temp", db_chart.db_temp[i]);
+                
+               addData2Chart(myChart, db_time,"pH", db_chart.db_pH[i],"temp", db_chart.db_temp[i]);
             }
             //alert("add chart done!!")//debug
             

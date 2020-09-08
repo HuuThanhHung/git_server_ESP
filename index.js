@@ -4,6 +4,7 @@ var Excel = require("exceljs");
 const { emit } = require("process");
 const { Socket } = require("dgram");
 const { stringify } = require("querystring");
+const { count } = require("console");
 var app = express();
 app.use(express.static("./public"));
 app.set("view engine", "ejs");// set view when render home page
@@ -40,7 +41,7 @@ month[8] = "Sep";
 month[9] = "Oct";
 month[10] = "Nov";
 month[11] = "Dec";
-var t_month = month[date_ob.getMonth()];
+var t_month  = month[date_ob.getMonth()];
 var t_hour = date_ob.getHours();
 var t_minute = date_ob.getMinutes();
 
@@ -83,7 +84,7 @@ io.on("connection", function(socket) {
                 console.log(currentRow.getCell("A").value);//debug
 
                 const tdataPh = [{
-                    Time : t_hour+"h "+t_minute+"m",
+                    Time : t_day+ "-"+ t_month+" "+t_hour+"h "+t_minute+"m",
                     pH : Json_from_ESP.pH,
                     Temperature : Json_from_ESP.Temp
                 }]; 
@@ -195,7 +196,7 @@ io.on("connection", function(socket) {
         //step 3.2 server check password and send back response      
         workbook.xlsx.readFile(filename).then(function() {
             var worksheet = workbook.getWorksheet("UserInfor");
-            console.log("Number of row "+worksheet.rowCount);
+            console.log("Number of row UserInfor"+worksheet.rowCount);
             for(i =1; i <= worksheet.rowCount; i++)
             {
                 var row = worksheet.getRow(i);
@@ -219,7 +220,7 @@ io.on("connection", function(socket) {
             console.log("-------old data --------")
             var worksheet1 = workbook.getWorksheet("Data");
             var totalrow = worksheet1.rowCount;
-            console.log("false: "+totalrow);//debug
+            console.log("totalrow: "+worksheet1.rowCount);//debug
             var ArrDB_time = [];
             var ArrDB_pH = [];
             var ArrDB_temp = [];
@@ -227,20 +228,29 @@ io.on("connection", function(socket) {
             var offset;
             if(totalrow>1 && totalrow<10)
             {
-                offset = totalrow;
+                tcount = totalrow;
+                ArrId = totalrow - 2;
+                do{
+                    var CurRow = worksheet1.getRow(tcount);
+                    ArrDB_time[ArrId] = CurRow.getCell("A").value;
+                    ArrDB_pH[ArrId] = CurRow.getCell("B").value;
+                    ArrDB_temp[ArrId] = CurRow.getCell("C").value;
+                    ArrId =  ArrId -1;
+                    tcount = tcount -1;
+                }while(tcount > 1)
             }
             else if(totalrow>=10)
             {
                 offset = totalrow -10;
+                for(countdown=totalrow;countdown>offset;countdown--){
+                    var CurRow = worksheet1.getRow(countdown);
+                    ArrDB_time[ArrId] = CurRow.getCell("A").value;
+                    ArrDB_pH[ArrId] = CurRow.getCell("B").value;
+                    ArrDB_temp[ArrId] = CurRow.getCell("C").value;
+                    ArrId =  ArrId -1;
+                }
             }
-            for(count = totalrow;count > offset;count --)
-            {
-                var CurRow = worksheet1.getRow(count);
-                ArrDB_time[ArrId] = CurRow.getCell("A").value;
-                ArrDB_pH[ArrId] = CurRow.getCell("B").value;
-                ArrDB_temp[ArrId] = CurRow.getCell("C").value;
-                ArrId =  ArrId -1;
-            }
+            
             var db_chart_old = {
                 db_time: ArrDB_time, 
                 db_pH: ArrDB_pH,

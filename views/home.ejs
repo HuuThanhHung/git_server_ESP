@@ -26,6 +26,9 @@
             border: 1px solid black;height: 50px;
             }
             
+            td{
+                text-align: center;
+            }
         </style>
     </head>
     <body>
@@ -130,11 +133,15 @@
                 <script src = "Line_chart.js"></script>
                 <br>
                 <table id="myTable">
-                    <tr>
-                      <th>Time</th>
-                      <th>pH Value</th>
-                      <th>Temperature</th>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <th id = "TableTime">Time</th>
+                            <th id = "Month_Day">Day</th>
+                            <th id = "TablepH">pH Value</th>
+                            <th id = "TableTemp">Temperature</th>
+                          </tr>
+                    </tbody>
+                    
                   </table>
             </form>
             
