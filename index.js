@@ -27,6 +27,20 @@ var workbook = new Excel.Workbook();
 var filename = "database.xlsx";
 var date_ob = new Date(); 
 var t_day = date_ob.getDate();
+var month = new Array();
+month[0] = "Jan";
+month[1] = "Feb";
+month[2] = "Mar";
+month[3] = "Apr";
+month[4] = "May";
+month[5] = "Jun";
+month[6] = "Jul";
+month[7] = "Aug";
+month[8] = "Sep";
+month[9] = "Oct";
+month[10] = "Nov";
+month[11] = "Dec";
+var t_month = month[date_ob.getMonth()];
 var t_hour = date_ob.getHours();
 var t_minute = date_ob.getMinutes();
 
@@ -36,6 +50,8 @@ io.on("connection", function(socket) {
     //console.log(t_day+" "+t_hour+" "+t_minute);//debug
     // ================ Server and ESP ==========================
     //step 1.0 create connection with ESP
+    var MonthDate = [t_day,t_month]
+    console.log(MonthDate);
     socket.on("connect_ESP_server",function(data_from_ESP){
         console.log(data_from_ESP);
     });
@@ -191,7 +207,7 @@ io.on("connection", function(socket) {
                 if(LogIndata.name == row.getCell("A").value && LogIndata.password == row.getCell("B").value)
                 {   
                     var str_1 =row.getCell("D").value;
-                    socket.emit("login_response_success",str_1); 
+                    socket.emit("login_response_success",MonthDate); 
                     //socket.broadcast.emit("chart_here")
                 }
                 else
@@ -278,7 +294,7 @@ io.on("connection", function(socket) {
                     console.log('Array added and then file saved.')
                 });
                 var str_1 =SignUpdata.LastName;
-                socket.emit("login_response_success",str_1); 
+                socket.emit("login_response_success",MonthDate); 
                 console.log("-------old data --------")
                 var old_data_chart = {
                     db_time: ArrDB_time, 

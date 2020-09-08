@@ -192,18 +192,18 @@ $(document).ready(function(){
         
     });
 
-    socket.on("login_response_success",function(datahello){
+    socket.on("login_response_success",function(MonthDate){
         $("#loginForm").hide(100); 
         $("#signupForm").hide(100);
         $("#boxLastName").html("");
-        $("#boxLastName").append("<div>Hi! "+ datahello +"</div>");
-        $("#JsonDisplay").show(300);              
+        //$("#boxLastName").append("<div>Hi! "+ datahello +"</div>");
+        $("#JsonDisplay").show(300);  
+        $("#Mid").append("<div class = 'user'>"+ MonthDate[0] +" - "+ MonthDate[1] +"</div>");
         //step 2 Server send bradcast to all node
         socket.on("Old_data_from_server",function(db_chart){
             removeData(myChart);
             for(i=0;i<10;i++)
             {   
-               
                 addData2Chart(myChart, db_chart.db_time[i],"pH", db_chart.db_pH[i],"temp", db_chart.db_temp[i]);
             }
 
@@ -227,7 +227,7 @@ $(document).ready(function(){
             $("#boxpumpStatus6").html("");
             $("#boxpumpStatus7").html("");  
             $("#boxValveStatus2").html("");
-           
+            
             //alert(Json_from_Server.Status)
             if(Json_from_Server.Status == 1)        
             {

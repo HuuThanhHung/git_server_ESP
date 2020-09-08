@@ -23,6 +23,7 @@
 #l_hello{color: rgb(47, 252, 252);}
 #fTemp{color: red;}
 #fpH{color: rgb(75, 192, 192);}
+#tDate{color: orange}
 /*box*/
 /*chart*/
 #myChart{height: 100;width: 400;}
@@ -30,9 +31,9 @@
 #loginForm{background-image: image("/views/login_form.jpg");}
 /*tb*/
 #left,  #right,#Mid{min-height: 30px}
-#left{width:50% ;float:left;}
-#right{width:50% ;float:right;}
-
+#left{width:20% ;float:left;}
+#right{width:60% ;float:right;}
+#Mid{font: bold;width:50% ;}
 /*image*/
 #BachKhoa{margin-left: 250 ;}
 
