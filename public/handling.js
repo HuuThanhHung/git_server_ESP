@@ -1,5 +1,5 @@
 
-//var socket = io("http://localhost:1805")
+var socket = io("http://localhost:1805")
 //var socket = io("http://3.18.143.29:1805")
 
 $(document).ready(function(){
@@ -129,6 +129,7 @@ $(document).ready(function(){
         var tbody = $('#myTable').children('tbody');
         var table = tbody.length ? tbody : $('#myTable');
         var row = '<tr>'+
+        '<td>{{Month_Day}}</td>'+
         '<td>{{time}}</td>'+
         '<td>{{pH}}</td>'+
         '<td>{{temp}}</td>'+
@@ -138,7 +139,8 @@ $(document).ready(function(){
         for(j=0;j<fTime.length;j++)
         {
             table.append(row.compose({
-            'time': fTime[j],
+            'Month_Day': fTime[j].replace(/(.+?)\s.*/g,"$1"),//detech day
+            'time': fTime[j].replace(/.+?\s(.+?h.*)/g,"$1"),//detech time
             'pH': fpH[j],
             'temp': fTemp[j]
         }));
@@ -231,12 +233,14 @@ $(document).ready(function(){
         $("#Mid").append("<div class = 'user'>"+ MonthDate[0] +" - "+ MonthDate[1] +"</div>");
         //step 2 Server send bradcast to all node
         socket.on("Old_data_from_server",function(db_chart){
-            alert(db_chart.db_pH)
+            //alert(db_chart.db_pH)
             removeData(myChart);
             addData2Table(db_chart.db_time,db_chart.db_pH, db_chart.db_temp);
-            var db_time = db_chart.db_time[i].replace(/(.+?)\s.*/g,"$1")
+            //var db_time = db_chart.db_time[i].replace(/(.+?)\s.*/g,"$1")//detech day
+            
             for(i=0;i<db_chart.db_pH.length;i++)
             {   
+                var db_time = db_chart.db_time[i].replace(/.+?\s(.+?h.*)/g,"$1")//detech time
                 addData2Chart(myChart, db_time,"pH", db_chart.db_pH[i],"temp", db_chart.db_temp[i]);
             }
         });
@@ -245,11 +249,12 @@ $(document).ready(function(){
             //for(i =0;i < db_chart.ArrDB_pH.count();i++)
             //{
             removeData(myChart);
-            
-            for(i=0;i<10;i++)
+            addData2Table(db_chart.db_time,db_chart.db_pH, db_chart.db_temp);
+            for(i=0;i<db_chart.db_pH.length;i++)
             {   
-                
-               addData2Chart(myChart, db_time,"pH", db_chart.db_pH[i],"temp", db_chart.db_temp[i]);
+                //alert(db_chart.db_time[i])//debug
+                var db_time = db_chart.db_time[i].replace(/.+?\s(.+?h.*)/g,"$1")//detech time
+                addData2Chart(myChart, db_time,"pH", db_chart.db_pH[i],"temp", db_chart.db_temp[i]);
             }
             //alert("add chart done!!")//debug
             
@@ -271,7 +276,7 @@ $(document).ready(function(){
                 
 
             }
-            else if(Json_from_Server.Status == 1)
+            else if(Json_from_Server.Status == 0)
             { 
                 //do nothing
             }

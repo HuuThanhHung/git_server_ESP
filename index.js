@@ -26,8 +26,6 @@ function PareseJSONdata(JsonData){
 }
 var workbook = new Excel.Workbook(); 
 var filename = "database.xlsx";
-var date_ob = new Date(); 
-var t_day = date_ob.getDate();
 var month = new Array();
 month[0] = "Jan";
 month[1] = "Feb";
@@ -41,9 +39,7 @@ month[8] = "Sep";
 month[9] = "Oct";
 month[10] = "Nov";
 month[11] = "Dec";
-var t_month  = month[date_ob.getMonth()];
-var t_hour = date_ob.getHours();
-var t_minute = date_ob.getMinutes();
+
 
 
 io.on("connection", function(socket) {	
@@ -51,6 +47,9 @@ io.on("connection", function(socket) {
     //console.log(t_day+" "+t_hour+" "+t_minute);//debug
     // ================ Server and ESP ==========================
     //step 1.0 create connection with ESP
+    var date_ob = new Date();
+    var t_day = date_ob.getDate();
+    var t_month  = month[date_ob.getMonth()];
     var MonthDate = [t_day,t_month]
     console.log(MonthDate);
     socket.on("connect_ESP_server",function(data_from_ESP){
@@ -59,12 +58,17 @@ io.on("connection", function(socket) {
     
     //step 1.1 receive Json data from ESP
     socket.on("Json_from_ESP",function(Json_from_ESP){
+        var date_ob = new Date();
+        var t_day = date_ob.getDate();
+        var t_month  = month[date_ob.getMonth()];
+        var t_hour = date_ob.getHours();
+        var t_minute = date_ob.getMinutes();
         // data Json format from ESP { pH: 18, EC: 5, Temp: 19, PumpStatus: 97 }
-        console.log(Json_from_ESP.pH);//debug
+        console.log("Json From ESP " + Json_from_ESP.pH);//debug
         console.log(Json_from_ESP.Status);//debug
         console.log(Json_from_ESP.Temp);//debug
         console.log(Json_from_ESP.PumpStatus);//debug
-        //console.log(JSON.stringify(Json_from_ESP.PumpStatus));//debug
+        console.log(t_minute + " -------- end");//debug
         //save data from ESP to excel file when recieved status True    
           
         if(Json_from_ESP.Status == 1)
@@ -77,11 +81,13 @@ io.on("connection", function(socket) {
                     {key: 'pH', header: 'pH'}, 
                     {key: 'Temperature', header: 'Temperature'}
                 ];
+                var pumpstsRow = worksheet.getRow(1);
+                pumpstsRow.getCell(4).value = Json_from_ESP.PumpStatus;
                 var rowNum = worksheet.rowCount;
                 var currentRow = worksheet.getRow(rowNum);
 
-                console.log("rowCount is "+  rowNum);//debug
-                console.log(currentRow.getCell("A").value);//debug
+                //console.log("rowCount is "+  rowNum);//debug
+                //console.log(currentRow.getCell("A").value);//debug
 
                 const tdataPh = [{
                     Time : t_day+ "-"+ t_month+" "+t_hour+"h "+t_minute+"m",
@@ -92,28 +98,29 @@ io.on("connection", function(socket) {
                 worksheet.addRow(item);
                 });
                 var newRowNum = worksheet.rowCount;
-                console.log(newRowNum)
+                console.log("when status = 1 totalrow"+newRowNum)
                 var ArrDB_time = [];
                 var ArrDB_pH = [];
                 var ArrDB_temp = [];
                 var ofset = 10;// how many column in chart you want is here
                 var ArrId = ofset -1;
-                if(ofset >newRowNum)
+                if(ofset >= newRowNum)
                 {
                     ArrId = newRowNum -2;//8
                     for(CountUp = 2;CountUp <= newRowNum ;CountUp++)
                     {
                         var CurRow = worksheet.getRow(CountUp);
                         ArrDB_time[CountUp -2] = CurRow.getCell("A").value
+                        console.log("Where is bug "+ArrDB_time[CountUp -2])
                         ArrDB_pH[CountUp -2] = CurRow.getCell("B").value
                         ArrDB_temp[CountUp -2] = CurRow.getCell("C").value
                     }
                      
                 }
-                else if(ofset == newRowNum)
-                {
+                //else if(ofset == newRowNum)
+                //{
                     //do nothing
-                }
+                //}
                 else
                 {
                     for(CountDwn = newRowNum;CountDwn > newRowNum - ofset;CountDwn--)
@@ -132,7 +139,7 @@ io.on("connection", function(socket) {
                     db_temp:ArrDB_temp                    
                 };
                 //data_chartold = db_chart;
-                console.log(db_chart.db_pH);//debug 
+                console.log("Time load db"+db_chart.db_time);//debug 
                 workbook.xlsx.writeFile(filename).then(function() {
                 console.log('pH Temp are added and then file saved.')
                 });
@@ -142,41 +149,51 @@ io.on("connection", function(socket) {
         }
         else if(Json_from_ESP.Status == 0)
         {
-            
-            workbook.xlsx.readFile(filename).then(function(){
-                var worksheet = workbook.getWorksheet("Data");
-                var totalrow = worksheet.rowCount;
-                console.log("false: "+totalrow);//debug
-                var ArrDB_time = [];
-                var ArrDB_pH = [];
-                var ArrDB_temp = [];
-                var ArrId = 10 -1;
-                var offset;
-                if(totalrow>1 && totalrow<10)
+            console.log("-------old data --------")
+            var worksheet1 = workbook.getWorksheet("Data");
+            var totalrow = worksheet1.rowCount;
+            console.log("totalrow: "+worksheet1.rowCount);//debug
+            var ArrDB_time = [];
+            var ArrDB_pH = [];
+            var ArrDB_temp = [];
+            var ArrId = 10 -1;
+            var offset;
+            if(totalrow>1 && totalrow<10)
+            {
+                tcount = totalrow;
+                ArrId = totalrow - 2;
+                do{
+                    var CurRow = worksheet1.getRow(tcount);
+                    ArrDB_time[ArrId] = CurRow.getCell("A").value;
+                    ArrDB_pH[ArrId] = CurRow.getCell("B").value;
+                    ArrDB_temp[ArrId] = CurRow.getCell("C").value;
+                    ArrId =  ArrId -1;
+                    tcount = tcount -1;
+                }while(tcount > 1)
+            }
+            else if(totalrow>=10)
+            {
+                if(totalrow==10)
                 {
-                    offset = totalrow;
+                    ArrId = totalrow - 2;
                 }
-                else if(totalrow>=10)
-                {
-                    offset = totalrow -10;
-                }
-                for(count = totalrow;count > offset;count --)
-                {
-                    var CurRow = worksheet.getRow(count);
+                offset = totalrow -10;
+                for(countdown=totalrow;countdown>offset;countdown--){
+                    var CurRow = worksheet1.getRow(countdown);
                     ArrDB_time[ArrId] = CurRow.getCell("A").value;
                     ArrDB_pH[ArrId] = CurRow.getCell("B").value;
                     ArrDB_temp[ArrId] = CurRow.getCell("C").value;
                     ArrId =  ArrId -1;
                 }
-                var db_chart_old = {
-                    db_time: ArrDB_time, 
-                    db_pH: ArrDB_pH,
-                    db_temp:ArrDB_temp                    
-                };
-                console.log("-------chart old data --------")//debug
-                socket.broadcast.emit("Sever_send_chart_Json",db_chart_old);
+            }
             
-            });
+            var db_chart_old = {
+                db_time: ArrDB_time, 
+                db_pH: ArrDB_pH,
+                db_temp:ArrDB_temp                    
+            };
+            console.log(db_chart_old.db_pH);
+            socket.emit("Old_data_from_server",db_chart_old);
             
         }
         //step 2 Server send bradcast to all node
@@ -241,6 +258,10 @@ io.on("connection", function(socket) {
             }
             else if(totalrow>=10)
             {
+                if(totalrow==10)
+                {
+                    ArrId = totalrow - 2;
+                }
                 offset = totalrow -10;
                 for(countdown=totalrow;countdown>offset;countdown--){
                     var CurRow = worksheet1.getRow(countdown);
