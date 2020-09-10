@@ -83,6 +83,7 @@ io.on("connection", function(socket) {
             StsRow.getCell(5).value = Json_from_ESP.Status;
             //console.log("rowCount is "+  rowNum);//debug
             //console.log(currentRow.getCell("A").value);//debug
+            t_hour = t_hour +7;
             const tdataPh = [{
                 Time : t_day+ "-"+ t_month+" "+t_hour+"h "+t_minute+"m",
                 pH : Json_from_ESP.pH,
@@ -356,12 +357,6 @@ io.on("connection", function(socket) {
                 });
                 var str_1 =SignUpdata.LastName;
                 socket.emit("login_response_success",MonthDate); 
-                console.log("-------old data --------")
-                var old_data_chart = {
-                    db_time: ArrDB_time, 
-                    db_pH: ArrDB_pH,
-                    db_temp:ArrDB_temp                    
-                };
             }
             //read excel file to get data for chart
             var worksheet1 = workbook.getWorksheet("Data");
@@ -371,30 +366,43 @@ io.on("connection", function(socket) {
             var ArrDB_pH = [];
             var ArrDB_temp = [];
             var ArrId = 10 -1;
-            var offset;
-            if(totalrow>1 && totalrow<10)
-            {
-                offset = totalrow;
-            }
-            else if(totalrow>=10)
-            {
-                offset = totalrow -10;
-            }
-            for(count = totalrow;count > offset;count --)
-            {
-                var CurRow = worksheet1.getRow(count);
-                ArrDB_time[ArrId] = CurRow.getCell("A").value;
-                ArrDB_pH[ArrId] = CurRow.getCell("B").value;
-                ArrDB_temp[ArrId] = CurRow.getCell("C").value;
-                ArrId =  ArrId -1;
-            }
-            var db_chart_old = {
-                db_time: ArrDB_time, 
-                db_pH: ArrDB_pH,
-                db_temp:ArrDB_temp                    
-            };
-            console.log("-------chart old data --------")//debug
-            socket.emit("Old_data_from_server",db_chart_old);
+                var offset;
+                if(totalrow>1 && totalrow<10)
+                {
+                    tcount = totalrow;
+                    ArrId = totalrow - 2;
+                    do{
+                        var CurRow = worksheet1.getRow(tcount);
+                        ArrDB_time[ArrId] = CurRow.getCell("A").value;
+                        ArrDB_pH[ArrId] = CurRow.getCell("B").value;
+                        ArrDB_temp[ArrId] = CurRow.getCell("C").value;
+                        ArrId =  ArrId -1;
+                        tcount = tcount -1;
+                    }while(tcount > 1)
+                }
+                else if(totalrow>=10)
+                {
+                    if(totalrow==10)
+                    {
+                        ArrId = totalrow - 2;
+                    }
+                    offset = totalrow -10;
+                    for(countdown=totalrow;countdown>offset;countdown--){
+                        var CurRow = worksheet1.getRow(countdown);
+                        ArrDB_time[ArrId] = CurRow.getCell("A").value;
+                        ArrDB_pH[ArrId] = CurRow.getCell("B").value;
+                        ArrDB_temp[ArrId] = CurRow.getCell("C").value;
+                        ArrId =  ArrId -1;
+                    }
+                }
+                
+                var db_chart_old = {
+                    db_time: ArrDB_time, 
+                    db_pH: ArrDB_pH,
+                    db_temp:ArrDB_temp                    
+                };
+                console.log(db_chart_old.db_pH);
+                socket.emit("Old_data_from_server",db_chart_old);
 
             var FirstRow =  worksheet1.getRow(1);
             var pumpStsRow = FirstRow.getCell("D").value;
