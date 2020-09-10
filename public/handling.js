@@ -1,5 +1,5 @@
 
-var socket = io("http://localhost:1805")
+//var socket = io("http://localhost:1805")
 //var socket = io("http://3.18.143.29:1805")
 
 $(document).ready(function(){
