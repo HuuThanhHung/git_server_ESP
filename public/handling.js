@@ -232,17 +232,46 @@ $(document).ready(function(){
         $("#JsonDisplay").show(300);  
         $("#Mid").append("<div class = 'user'>"+ MonthDate[0] +" - "+ MonthDate[1] +"</div>");
         //step 2 Server send bradcast to all node
+        socket.on("Old_data_sts_from_server",function(data_sts){
+            ArrPumstatus =[];
+            $("#boxpumpStatus6").html("");
+            $("#boxpumpStatus7").html("");  
+            $("#boxValveStatus2").html("");
+            
+            if(data_sts[1] == 2 || data_sts[1] == 1 || data_sts[1] == 0)
+            {
+                $("#boxStatus").html("");
+                $("#boxStatus").append("<div class = 'user' >Running ...</div>");
+                document.getElementById("boxStatus").style.color = "blue";
+            }
+            if(data_sts[1] == 3)
+            {
+                $("#boxStatus").html("");
+                $("#boxStatus").append("<div class = 'user'>Stop</div>");
+                document.getElementById("boxStatus").style.color = "red";
+            }
+
+            ArrPumstatus = checkPumpStatus(data_sts[0])
+            ArrImage =   checkImage (data_sts[0])  
+            $("#boxValveStatus2").append("<div class = 'user'>"+ ArrPumstatus[2]+"</div>");
+            document.getElementById("boxValveStatus2").style.color = ArrImage[2];
+            $("#boxpumpStatus6").append("<div class = 'user'>"+ ArrPumstatus[0] +"</div>");
+            document.getElementById("boxpumpStatus6").style.color = ArrImage[0];
+            $("#boxpumpStatus7").append("<div class = 'user'>"+ ArrPumstatus[1] +"</div>"); 
+            document.getElementById("boxpumpStatus7").style.color = ArrImage[1];
+        })
         socket.on("Old_data_from_server",function(db_chart){
             //alert(db_chart.db_pH)
             removeData(myChart);
-            addData2Table(db_chart.db_time,db_chart.db_pH, db_chart.db_temp);
             //var db_time = db_chart.db_time[i].replace(/(.+?)\s.*/g,"$1")//detech day
-            
             for(i=0;i<db_chart.db_pH.length;i++)
             {   
                 var db_time = db_chart.db_time[i].replace(/.+?\s(.+?h.*)/g,"$1")//detech time
                 addData2Chart(myChart, db_time,"pH", db_chart.db_pH[i],"temp", db_chart.db_temp[i]);
             }
+        });
+        socket.on("Old_data_table_from_server",function(db_chart){
+            addData2Table(db_chart.db_time,db_chart.db_pH, db_chart.db_temp);
         });
         socket.on("Sever_send_chart_Json",function(db_chart){
 
