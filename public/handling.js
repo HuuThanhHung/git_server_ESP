@@ -1,5 +1,5 @@
 
-var socket = io("http://localhost:1805")
+//var socket = io("http://localhost:1805")
 //var socket = io("http://3.18.143.29:1805")
 
 $(document).ready(function(){
@@ -284,8 +284,8 @@ $(document).ready(function(){
             //for(i =0;i < db_chart.ArrDB_pH.count();i++)
             //{
             removeData(myChart);
-            removeTable();
-            addData2Table(db_chart.db_time,db_chart.db_pH, db_chart.db_temp);
+            //removeTable();
+            //addData2Table(db_chart.db_time,db_chart.db_pH, db_chart.db_temp);
             for(i=0;i<db_chart.db_pH.length;i++)
             {   
                 //alert(db_chart.db_time[i])//debug

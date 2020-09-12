@@ -51,9 +51,9 @@ io.on("connection", function(socket) {
     var t_day = date_ob.getDate();
     var t_month  = month[date_ob.getMonth()];
     var MonthDate = [t_day,t_month]
-    console.log(MonthDate);
+    console.log(MonthDate);//debug
     socket.on("connect_ESP_server",function(data_from_ESP){
-        console.log(data_from_ESP);
+        console.log(data_from_ESP);//debug
     });
     
     //step 1.1 receive Json data from ESP
@@ -142,12 +142,30 @@ io.on("connection", function(socket) {
                     db_temp:ArrDB_temp                    
                 };
                 //data_chartold = db_chart;
-                console.log("Time load db"+db_chart.db_time);//debug 
+                //console.log("Time load db"+db_chart.db_time);//debug 
                 workbook.xlsx.writeFile(filename).then(function() {
                 console.log('pH Temp are added and then file saved.')
                 });
                 console.log("-----------------------------")//debug
-                socket.broadcast.emit("Sever_send_chart_Json",db_chart);            
+                socket.broadcast.emit("Sever_send_chart_Json",db_chart);
+                
+                var totalrow = worksheet.rowCount;
+                var ArrDB_time_all = [];
+                var ArrDB_pH_all = [];
+                var ArrDB_temp_all = [];
+                for(m=2;m<=totalrow;m++){
+                    var CurRow1 = worksheet.getRow(m);
+                    ArrDB_time_all[m-2] = CurRow1.getCell("A").value;
+                    ArrDB_pH_all[m-2] = CurRow1.getCell("B").value;
+                    ArrDB_temp_all[m-2] = CurRow1.getCell("C").value;
+                }
+                var db_table = {
+                    db_time: ArrDB_time_all, 
+                    db_pH: ArrDB_pH_all,
+                    db_temp:ArrDB_temp_all                    
+                };
+                //console.log("when status = 1 send db table :"+db_table.db_time)
+                socket.broadcast.emit("Old_data_table_from_server",db_table);
             }
             
             else if(Json_from_ESP.Status == 3 || Json_from_ESP.Status == 2)
@@ -203,7 +221,7 @@ io.on("connection", function(socket) {
                     db_pH: ArrDB_pH,
                     db_temp:ArrDB_temp                    
                 };
-                console.log(db_chart_old.db_pH);
+                //console.log(db_chart_old.db_pH);
                 socket.emit("Old_data_from_server",db_chart_old);
             }
             
