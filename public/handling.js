@@ -46,9 +46,14 @@ $(document).ready(function(){
         {
             chart.data.datasets[i].data.splice(0, 10);
         }
-        
-
         chart.update();
+    }
+    function removeTable() {
+        var RowNum = document.getElementById("myTable").rows.length;
+        for(i = 1; i<RowNum -1; i++)
+        {
+            document.getElementById("myTable").deleteRow(1);
+        }
     }
 
     function checkPumpStatus(Status_Pump)
@@ -271,6 +276,7 @@ $(document).ready(function(){
             }
         });
         socket.on("Old_data_table_from_server",function(db_chart){
+            removeTable();
             addData2Table(db_chart.db_time,db_chart.db_pH, db_chart.db_temp);
         });
         socket.on("Sever_send_chart_Json",function(db_chart){
@@ -278,6 +284,7 @@ $(document).ready(function(){
             //for(i =0;i < db_chart.ArrDB_pH.count();i++)
             //{
             removeData(myChart);
+            removeTable();
             addData2Table(db_chart.db_time,db_chart.db_pH, db_chart.db_temp);
             for(i=0;i<db_chart.db_pH.length;i++)
             {   

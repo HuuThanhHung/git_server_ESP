@@ -84,6 +84,10 @@ io.on("connection", function(socket) {
             //console.log("rowCount is "+  rowNum);//debug
             //console.log(currentRow.getCell("A").value);//debug
             t_hour = t_hour +7;
+            if(t_hour >= 24)
+            {
+                t_hour = 24 - t_hour;
+            }
             const tdataPh = [{
                 Time : t_day+ "-"+ t_month+" "+t_hour+"h "+t_minute+"m",
                 pH : Json_from_ESP.pH,
