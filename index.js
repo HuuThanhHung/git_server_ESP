@@ -69,7 +69,6 @@ io.on("connection", function(socket) {
         console.log(Json_from_ESP.Temp);//debug
         console.log(Json_from_ESP.PumpStatus);//debug
         console.log(t_minute + " -------- end");//debug
-        
         var ArrDatabase = [];
         workbook.xlsx.readFile(filename).then(function(){
             var worksheet = workbook.getWorksheet("Data");
@@ -222,7 +221,7 @@ io.on("connection", function(socket) {
                     db_temp:ArrDB_temp                    
                 };
                 //console.log(db_chart_old.db_pH);
-                socket.emit("Old_data_from_server",db_chart_old);
+                //socket.emit("Old_data_from_server",db_chart_old);
             }
             
         });

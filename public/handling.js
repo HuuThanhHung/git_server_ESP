@@ -1,5 +1,5 @@
 
-//var socket = io("http://localhost:1805")
+var socket = io("http://localhost:1805")
 //var socket = io("http://3.18.143.29:1805")
 
 $(document).ready(function(){
@@ -58,6 +58,7 @@ $(document).ready(function(){
 
     function checkPumpStatus(Status_Pump)
     { 
+        //var Status_Pump = Status_Pump_in.replace(/(\d{1,3}).*/g,"$1");
         var Json_pump_sts =[3]
         switch (Status_Pump) {
             case 0:
@@ -89,7 +90,8 @@ $(document).ready(function(){
     }
 
     function checkImage(Status_Pump)
-    { 
+    {
+        //var Status_Pump = Status_Pump_in.replace(/(\d{1,3}).*/g,"$1")//detech status 
         var image_arr =[3]
         switch (Status_Pump) {
             case 0:
@@ -266,7 +268,7 @@ $(document).ready(function(){
             document.getElementById("boxpumpStatus7").style.color = ArrImage[1];
         })
         socket.on("Old_data_from_server",function(db_chart){
-            alert(db_chart.db_pH)
+            //alert(db_chart.db_pH)
             removeData(myChart);
             //var db_time = db_chart.db_time[i].replace(/(.+?)\s.*/g,"$1")//detech day
             for(i=0;i<db_chart.db_pH.length;i++)
